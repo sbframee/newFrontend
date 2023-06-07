@@ -10,11 +10,10 @@ const Login = () => {
     const token = localStorage.getItem('token');
     if (token) {
       const userType = localStorage.getItem('user_type');
-      const username = localStorage.getItem('username');
       if (userType === 'admin') {
-        window.location.assign(`/home/${username}`);
+        window.location.assign(`/home`);
       } else if (userType === 'user') {
-        window.location.assign(`/user/${username}`);
+        window.location.assign(`/user`);
       }
     }
   }, []);
