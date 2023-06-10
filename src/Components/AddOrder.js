@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import "./style.css";
 
-const AddOrder = () => {
+const AddOrder = ({onSave, onClose}) => {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [category, setCategory] = useState('New Order');
@@ -25,7 +26,7 @@ const AddOrder = () => {
     fetchLatestOrderId();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     const newOrderId = latestOrderId + 1;
 
@@ -42,43 +43,52 @@ const AddOrder = () => {
       // Clear the form after successful submission
       setName('');
       setMobile('');
-      setCategory('New Order');
+      onSave();
     } catch (error) {
       console.error('Failed to add order', error);
     }
   };
 
   return (
-    <div>
-      <h2>Add Order</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
+    <div className="overlay" style={{ zIndex: 9999999 }}>
+      <div className="modal" style={{ height: "fit-content", width: "fit-content" }}>
+        <div className="content" style={{
+            height: "fit-content",
+            padding: "20px",
+            width: "fit-content",
+          }}>
+        <div style={{ overflowY: "scroll" }}>
+        <form className="form" onSubmit={submitHandler}>
+         <div className="row">
+            <h2>Add Order</h2>
+          </div> 
+          <div className="formGroup">     
+          <div className="row" style={{width:"100%"}}>   
+        <label className="selectLabel">
           Name:
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
         </label>
-        <br />
-        <label>
+        </div>
+        <div className="row" style={{width:"100%"}}>
+        <label className="selectLabel">
           Mobile:
           <input type="text" value={mobile} onChange={(e) => setMobile(e.target.value)} />
         </label>
-        <br />
-        <label>
-          Category:
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="New Order">New Order</option>
-            <option value="Designing">Designing</option>
-            <option value="Printsk">Printsk</option>
-            <option value="Printother">Printother</option>
-            <option value="Binding">Binding</option>
-            <option value="Fitting">Fitting</option>
-            <option value="Ready">Ready</option>
-            <option value="Holdsk">Holdsk</option>
-            <option value="Customer">Customer</option>
-          </select>
-        </label>
-        <br />
-        <button type="submit">Add Order</button>
-      </form>
+        </div>
+        </div>
+        <button type="submit" className="button">
+              Add Order
+          </button>
+          </form>
+          </div>
+        <button onClick={onClose} className="closeButton">
+                x
+              </button>
+      
+      
+      
+    </div>
+    </div>
     </div>
   );
 };

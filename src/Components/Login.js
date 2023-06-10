@@ -11,7 +11,7 @@ const Login = () => {
     if (token) {
       const userType = localStorage.getItem('user_type');
       if (userType === 'admin') {
-        window.location.assign(`/home`);
+        window.location.assign(`/admin`);
       } else if (userType === 'user') {
         window.location.assign(`/user`);
       }
@@ -43,7 +43,7 @@ const Login = () => {
       localStorage.setItem('username', name);
 
       if (userType === 'admin') {
-        window.location.assign('/home');
+        window.location.assign('/admin');
       } else if (userType === 'user') {
         window.location.assign('/user');
       }
