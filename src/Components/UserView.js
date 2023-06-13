@@ -13,12 +13,34 @@ const UserView = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [uniqueList, setUniqueList] = useState([]);
 
+  const handleLogout = () => {
+    window.localStorage.clear();
+    window.location.assign("/sign-in");
+  };
+
   const fetchOrderData = async () => {
     try {
       const response = await axios.get("http://localhost:9000/orders/GetOrderList");
       if (response.data.success) {
         const orders = response.data.result;
-        setItems(orders);
+
+        const ordersWithCustomerData = await Promise.all(
+          orders.map(async (orderItem) => {
+            try {
+              const customerResponse = await axios.get(`http://localhost:9000/customers/getCustomerDetails/${orderItem.customer_uuid}`);
+              const customerData = customerResponse.data.result;
+              return {
+                ...orderItem,
+                customer_name: customerData.customer_name,
+                customer_mobile: customerData.customer_mobile
+              };
+            } catch (error) {
+              console.error(error);
+              return orderItem; // Return case item without customer details on error
+            }
+          })
+        );
+        setItems(ordersWithCustomerData);
       }
     } catch (error) {
       console.error(error);
@@ -124,6 +146,7 @@ const UserView = () => {
             </div>
           </Box>
         </div>
+        <button onClick={handleLogout}>Logout</button>
         <div
           className="flex"
           style={{
