@@ -13,7 +13,6 @@ const Update = ({ onSave, onClose, item }) => {
   useEffect(() => {
     fetchOrderDetails();
     fetchCategory();
-    fetchName();
   }, [item]);
 
   const fetchOrderDetails = async () => {
@@ -24,13 +23,13 @@ const Update = ({ onSave, onClose, item }) => {
         console.log("Order Data:", orderData);
         setSelectedOrder(orderData);
         console.log("Customer UUID:", orderData.customer_uuid);
-  
+
         setData((prevState) => ({
           ...prevState,
           category: orderData.category,
           name: orderData.cname,
         }));
-  
+
         // Fetch customer details based on customer_uuid
         try {
           const customerResponse = await axios.get(`http://localhost:9000/customers/getCustomerDetails/${orderData.customer_uuid}`);
@@ -46,18 +45,11 @@ const Update = ({ onSave, onClose, item }) => {
       }
     }
   };
-  
+
   const fetchCategory = () => {
     axios
-      .get("http://localhost:9000/actions/getCategory")
+      .get("http://localhost:9000/categories/getCategory")
       .then((response) => setCategory(response.data))
-      .catch((error) => console.error(error));
-  };
-
-  const fetchName = () => {
-    axios
-      .get("http://localhost:9000/actions/getName")
-      .then((response) => setCname(response.data))
       .catch((error) => console.error(error));
   };
 
@@ -66,7 +58,12 @@ const Update = ({ onSave, onClose, item }) => {
     setData((prevState) => ({
       ...prevState,
       category: selectedCategory,
+      name: "", // Reset the selected name when the category changes
     }));
+    axios
+      .get(`http://localhost:9000/category_names/getCategory_name?category=${selectedCategory}`)
+      .then((response) => setCname(response.data))
+      .catch((error) => console.log(error));
   };
 
   const onNameChange = (event) => {
@@ -123,7 +120,7 @@ const Update = ({ onSave, onClose, item }) => {
                   </label>
                 </div>
               )}
-              {customerDetails && customerDetails.customer_mobile && (
+               {customerDetails && customerDetails.customer_mobile && (
                 <div className="formGroup">
                   <label className="selectLabel">
                     Mobile Number
@@ -136,37 +133,34 @@ const Update = ({ onSave, onClose, item }) => {
                   Select category
                   <select id="category" value={data.category} onChange={onCategoryChange}>
                     <option value="">Select</option>
-                    {category.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
+                    {category.map(({ name }) => (
+                      <option key={name} value={name}>
+                        {name}
                       </option>
                     ))}
                   </select>
                 </label>
               </div>
               <div className="formGroup">
-                <label className="selectLabel" style={{ width: "100%" }}>
-                  Select name
-                  <select id="name" value={data.name} onChange={onNameChange}>
-                    <option value="">Select</option>
-                    {cname.map((caseName) => (
-                      <option key={caseName} value={caseName}>
-                        {caseName}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
+  <label className="selectLabel" style={{ width: "100%" }}>
+    Select name
+    <select id="name" value={data.name} onChange={onNameChange}>
+      <option value="">Select</option>
+      {cname.map(({ name }) => (
+        <option key={name} value={name}>
+          {name}
+        </option>
+      ))}
+    </select>
+  </label>
+</div>
+
               {errMessage && <p>{errMessage}</p>}
-              
-                <button
-                  type="submit"
-                  className="submit"
-                  onClick={() => { submitHandler(); onClose(); }}
-                >
-                  Update
-                </button>
-              
+
+              <button type="submit" className="submit" onClick={() => { submitHandler(); onClose(); }}>
+                Update
+              </button>
+
               <button onClick={onClose} className="closeButton">
                 x
               </button>
