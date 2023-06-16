@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Edit, WhatsApp } from "@mui/icons-material";
-import "./style.css";
 import Update from "./Update";
 import { Box } from "@mui/material";
 

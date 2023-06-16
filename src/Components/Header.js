@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MessagePopup from "./MessagePopup";
 
 const Header = () => {
   const Navigate = useNavigate();
-  const [logoutPopup, setLogoutPopup] = useState("");
   const handleLogout = () => {
     window.localStorage.clear();
-    window.location.assign("/sign-in");
+    window.location.assign("/login");
   };
+
   return (
     <>
       <div className="header">
@@ -27,22 +26,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      {logoutPopup ? (
-        <MessagePopup
-          onClose={() => {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.reload();
-            Navigate("/login");
-          }}
-          onSave={() => setLogoutPopup(false)}
-          message="Confirm Logout"
-          button1="Logout"
-          button2="Cancel"
-        />
-      ) : (
-        ""
-      )}
+     
     </>
   );
 };

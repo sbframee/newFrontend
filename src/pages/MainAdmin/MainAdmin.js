@@ -1,17 +1,13 @@
 
 import React from "react";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
 import "./style.css";
 
 
 // import VerticalTabs from "../../components/VerticalTabs";
 
 const MainAdmin = () => {
-  const handleLogout = () => {
-    window.localStorage.clear();
-    window.location.assign("/sign-in");
-  };
   return (
     <>
       <Sidebar />
@@ -37,7 +33,6 @@ const MainAdmin = () => {
                 // value={searchItems}
                 // onChange={(e) => setSearhItems(e.target.value)}
               />
-              <button onClick={handleLogout}>Logout</button>
             </div>
           </div>
         </div>

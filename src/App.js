@@ -1,21 +1,27 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./Components/Login";
-import MainAdmin from "./Components/MainAdmin";
-import UserView from "./Components/UserView";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 
-const App = () => {
-  //const isLoggedIn = window.localStorage.getItem("loggedIn");
+import LoginPage from "./pages/LoginPage";
+import MainAdmin from "./pages/MainAdmin/MainAdmin";
+import UserView from "./pages/MainAdmin/UserView";
+
+function App() {
+
   return (
-    <Router>
-      <Routes>
-        <Route exact path="/" element={ <Login /> } />
+    <div className="App">
+      <Router>
+        <Routes>
+        <Route exact path="/" element={ <LoginPage /> } />
         <Route path="/admin" element={<MainAdmin />} />
-        <Route path="/sign-in" element={<Login />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/user" element={<UserView />} />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </div>
   );
-};
+}
 
 export default App;
