@@ -112,24 +112,23 @@ const Update = ({ onSave, onClose, item }) => {
               <div className="row">
                 <h2>Update</h2>
               </div>
+              <div className="formGroup">
               {customerDetails && customerDetails.customer_name && (
-                <div className="formGroup">
+                <div className="row" style={{width:"100%"}}>
                   <label className="selectLabel">
                     Name
                     <input type="text" value={customerDetails.customer_name} readOnly />
                   </label>
-                </div>
+                  </div>
               )}
                {customerDetails && customerDetails.customer_mobile && (
-                <div className="formGroup">
-                  <label className="selectLabel">
+                <div className="row" style={{width:"100%"}}>                  <label className="selectLabel">
                     Mobile Number
                     <input type="text" value={customerDetails.customer_mobile} readOnly />
                   </label>
                 </div>
               )}
-              <div className="formGroup">
-                <label className="selectLabel" style={{ width: "100%" }}>
+              <div className="row" style={{width:"100%"}}>                <label className="selectLabel" style={{ width: "100%" }}>
                   Select category
                   <select id="category" value={data.category} onChange={onCategoryChange}>
                     <option value="">Select</option>
@@ -141,7 +140,7 @@ const Update = ({ onSave, onClose, item }) => {
                   </select>
                 </label>
               </div>
-              <div className="formGroup">
+              <div className="row" style={{width:"100%"}}>
   <label className="selectLabel" style={{ width: "100%" }}>
     Select name
     <select id="name" value={data.name} onChange={onNameChange}>
@@ -153,6 +152,7 @@ const Update = ({ onSave, onClose, item }) => {
       ))}
     </select>
   </label>
+</div>
 </div>
 
               {errMessage && <p>{errMessage}</p>}

@@ -53,8 +53,8 @@ const Sidebar = ({ setIsItemAvilableOpen }) => {
           menuList={[
           
             {
-              name: "Event",
-              link: "/admin/event",
+              name: "Orders",
+              link: "/admin/listOrder",
             },
           ]}
         />

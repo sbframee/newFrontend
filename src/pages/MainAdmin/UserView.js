@@ -256,22 +256,23 @@ function AddOrder({
 
   return (
     <>
-    <div className="overlay" style={{ zIndex: 9999999 }}>
+     <div className="overlay" style={{ zIndex: 9999999 }}>
       <div className="modal" style={{ height: "fit-content", width: "fit-content" }}>
         <div className="content" style={{
             height: "fit-content",
             padding: "20px",
             width: "fit-content",
           }}>
-        <div style={{ overflowY: "scroll" }}>
-        <form className="form" onSubmit={submitHandler}>
-         <div className="row">
-            <h2>Add Order</h2>
-          </div> 
-          <div className="formGroup">     
-          <div className="row" style={{width:"100%"}}>   
-        <label className="selectLabel" style={{width:"100%"}}>
-          Customer
+          <div style={{ overflowY: "scroll" }}>
+            <form className="form" onSubmit={submitHandler}>
+              <div className="row">
+              <h2>Add Order</h2>
+              </div>
+
+              <div className="formGroup">
+                <div className="row" style={{width:"100%"}}>
+                  <label className="selectLabel" style={{width:"100%"}}>
+                  Customer
           <Select
                     name="customer_uuid"
                     options={customersOptions}
@@ -293,23 +294,15 @@ function AddOrder({
                   >
                     <Add />
                   </button>
-        </label>
-        </div>
-        
-        </div>
-        <button type="submit" className="submit">
-              Add Order
-          </button>
-          </form>
+                  </label>
+                </div>
+               </div>
+              <button type="submit" className="submit">Save</button>
+            </form>
           </div>
-        <button onClick={onClose} className="closeButton">
-                x
-              </button>
-      
-      
-      
-    </div>
-    </div>
+          <button onClick={onClose} className="closeButton">x</button>
+        </div>
+      </div>
     </div>
     {newCustomerForm ? (
       <AddCustomer

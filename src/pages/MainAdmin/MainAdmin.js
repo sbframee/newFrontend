@@ -4,9 +4,6 @@ import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import "./style.css";
 
-
-// import VerticalTabs from "../../components/VerticalTabs";
-
 const MainAdmin = () => {
   return (
     <>
@@ -15,7 +12,6 @@ const MainAdmin = () => {
         <Header />
   
         <div style={{ display: "flex", height: "100%" }}>
-          {/* <VerticalTabs /> */}
           <div className="inputs"></div>
 
           <div className="content-container" id="content-file-container">
