@@ -51,10 +51,17 @@ const Sidebar = ({ setIsItemAvilableOpen }) => {
           icon={<MasterIcon sx={{ fontSize: 50 }} />}
           isActive={true}
           menuList={[
-          
+            {
+              name: "Customers",
+              link: "/admin/customerList",
+            },
             {
               name: "Orders",
-              link: "/admin/listOrder",
+              link: "/admin/orderList",
+            },
+            {
+              name: "Groups",
+              link: "/admin/groupList",
             },
           ]}
         />

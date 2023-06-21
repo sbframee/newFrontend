@@ -57,20 +57,6 @@ const OrderList = ({ items }) => {
                   height: "fit-content",
                 }}
               >
-                <thead>
-                  <tr>
-                    <th colSpan={2}></th>
-                    <th colSpan={2}>
-                      <div className="t-head-element">Name</div>
-                    </th>
-                    <th colSpan={2}>
-                      <div className="t-head-element">Mobile</div>
-                    </th>
-                    <th>
-                      <div className="t-head-element"></div>
-                    </th>
-                  </tr>
-                </thead>
                 <tbody className="tbody">
                   {items?.map((item) => (
                     <tr key={item.id} style={{ height: "30px", backgroundColor: "#fff" }}>
@@ -82,6 +68,7 @@ const OrderList = ({ items }) => {
                       <td colSpan={2} style={{ color: "blue" }}>
                         <span className="flex">{item?.customer_mobile || ""}</span>
                       </td>
+                      <td colSpan={2}>{item?.cname}</td>
                       <td style={{ color: "green", display: "none", cursor: "pointer" }}>
                         <WhatsApp />
                       </td>

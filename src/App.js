@@ -7,7 +7,9 @@ import {
 import LoginPage from "./pages/LoginPage";
 import MainAdmin from "./pages/MainAdmin/MainAdmin";
 import UserView from "./pages/MainAdmin/UserView";
-import Items from "./pages/Master/Items";
+import Orders from "./pages/Master/Orders";
+import Customers from "./pages/Master/Customers";
+import Groups from "./pages/Master/Groups";
 export const server = "http://localhost:9000";
 
 function App() {
@@ -20,7 +22,9 @@ function App() {
         <Route path="/admin" element={<MainAdmin />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/user" element={<UserView />} />
-        <Route path= "/admin/listOrder" element={<Items />} />
+        <Route path= "/admin/orderList" element={<Orders />} />
+        <Route path= "/admin/customerList" element={<Customers />} />
+        <Route path= "/admin/groupList" element={<Groups />} />
         </Routes>
       </Router>
     </div>

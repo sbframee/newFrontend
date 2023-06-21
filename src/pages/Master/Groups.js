@@ -12,7 +12,8 @@ import {
 import MessagePopup from "../../components/MessagePopup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const Items = () => {
+
+const Groups = () => {
   const [itemsData, setItemsData] = useState([]);
   const [disabledItem, setDisabledItem] = useState(false);
   const [message, setMessage] = useState();
@@ -25,40 +26,34 @@ const Items = () => {
   const [filterTitle, setFilterTitle] = useState("");
 
   const getItemsData = async () => {
-    const response = await axios({
-      method: "get",
-      url: "http://localhost:9000/orders/GetOrderList",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.data.success) setItemsData(response.data.result);
+    axios
+    .get('http://localhost:9000/categories/getGroup')
+    .then((response) => setItemsData(response.data))
+    .catch((error) => console.error(error));
   };
+
   useEffect(() => {
     getItemsData();
   }, [popupForm, deletePopup]);
-  useEffect(
-    () =>
-      setFilterItemsData(
-        itemsData.filter(
-          (a) =>
-            a.cname &&
-            (!filterTitle ||
-              a.cname
-                .toLocaleLowerCase()
-                .includes(filterTitle.toLocaleLowerCase()))
-        )
-      ),
-    [itemsData, filterTitle, disabledItem]
-  );
+
+  useEffect(() => {
+    setFilterItemsData(
+      itemsData.filter(
+        (a) =>
+          a.name && 
+          (!filterTitle ||
+            a.name.toLowerCase().includes(filterTitle.toLowerCase()))
+      )
+    );
+  }, [itemsData, filterTitle, disabledItem]);
+  
   return (
     <>
       <Sidebar />
       <Header />
       <div className="item-sales-container orders-report-container">
         <div id="heading">
-          <h2>Orders</h2>
+          <h2>Groups</h2>
         </div>
         <div id="item-sales-top">
           <div
@@ -75,12 +70,12 @@ const Items = () => {
               type="text"
               onChange={(e) => setFilterTitle(e.target.value)}
               value={filterTitle}
-              placeholder="Search Order Title..."
+              placeholder="Search Group Title..."
               className="searchInput"
             />
 
             <div>Total Items: {filterItemsData.length}</div>
-           
+
             <button
               className="item-sales-search"
               onClick={() => setPopupForm(true)}
@@ -97,42 +92,41 @@ const Items = () => {
           />
         </div>
       </div>
-      {popupForm ? (
-        <AddGroup
-          onSave={() => setPopupForm(false)}
+      {popupForm && (
+        <AddGroup onSave={() => setPopupForm(false)} 
+        setItemsData={setItemsData}
+        popupInfo={popupForm}
+        items={itemsData}
+        getItem={getItemsData}
         />
-      ) : (
-        ""
       )}
-      {deletePopup ? (
+      {deletePopup && (
         <DeleteItemPopup
           onSave={() => setDeletePopup(false)}
           setItemsData={setItemsData}
           popupInfo={deletePopup}
         />
-      ) : (
-        ""
       )}
-      {message ? (
+      {message && (
         <MessagePopup
           message={message.text1}
           message2={message.text2}
           button1="Okay"
           onClose={() => setMessage(false)}
         />
-      ) : (
-        ""
       )}
     </>
   );
 };
 
-export default Items;
+export default Groups;
+
 function Table({ itemsDetails, setPopupForm, setDeletePopup }) {
   const [items, setItems] = useState("");
   const [order, setOrder] = useState("");
-  const [copied, setCopid] = useState("");
+  const [copied, setCopied] = useState("");
   const navigate = useNavigate();
+
   return (
     <table
       className="user-table"
@@ -148,7 +142,7 @@ function Table({ itemsDetails, setPopupForm, setDeletePopup }) {
               <div className="sort-buttons-container">
                 <button
                   onClick={() => {
-                    setItems("cname");
+                    setItems("name");
                     setOrder("asc");
                   }}
                 >
@@ -156,7 +150,7 @@ function Table({ itemsDetails, setPopupForm, setDeletePopup }) {
                 </button>
                 <button
                   onClick={() => {
-                    setItems("cname");
+                    setItems("name");
                     setOrder("desc");
                   }}
                 >
@@ -170,92 +164,103 @@ function Table({ itemsDetails, setPopupForm, setDeletePopup }) {
         </tr>
       </thead>
       <tbody className="tbody">
-      {itemsDetails?.map((item, i) => (
-            <tr
-              key={Math.random()}
-              style={{ height: "30px" }}
-              onClick={() => {}}
+        {itemsDetails?.map((item, i) => (
+          <tr
+            key={item._id}
+            style={{ height: "30px" }}
+            onClick={() => {}}
+          >
+            <td>{i + 1}</td>
+
+            <td colSpan={3}>{item?.name}</td>
+
+            <td
+              colSpan={1}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                setPopupForm({ type: "edit", data: item });
+              }}
             >
-              <td>{i + 1}</td>
+              <Edit />
+            </td>
+            <td
+              colSpan={1}
+              onClick={(e) => {
+                e.stopPropagation();
 
-              <td colSpan={3}>{item?.cname}</td>
+                setDeletePopup(item);
+              }}
+            >
+              <DeleteOutline />
+            </td>
+            <td
+              colSpan={1}
+              onClick={(e) => {
+                e.stopPropagation();
 
-              <td
-                colSpan={1}
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  setPopupForm({ type: "edit", data: item });
-                }}
-              >
-                <Edit />
-              </td>
-              <td
-                colSpan={1}
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  setDeletePopup(item);
-                }}
-              >
-                <DeleteOutline />
-              </td>
-              <td
-                colSpan={1}
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  navigator.clipboard.writeText(
-                    `https://savedate.in/inviters/${item.order_uuid}`
-                  );
-                  setCopid(item.event_uuid);
-                  setTimeout(() => {
-                    setCopid("");
-                  }, 3000);
-                }}
-              >
-                {copied === item.event_uuid ? (
-                  <div
-                    style={{
-                      color: "green",
-                      fontWeight: "bold",
-                      fontSize: "10px",
-                    }}
-                  >
-                    Copied!
-                  </div>
-                ) : (
-                  <CopyAll />
-                )}
-              </td>
-              <td>
-                <button
-                  className="item-sales-search"
-                  onClick={() => navigate("/admin/queries/" + item.order_uuid)}
+                navigator.clipboard.writeText(
+                  `https://savedate.in/inviters/${item.name}`
+                );
+                setCopied(item.event_uuid);
+                setTimeout(() => {
+                  setCopied("");
+                }, 3000);
+              }}
+            >
+              {copied === item.name ? (
+                <div
+                  style={{
+                    color: "green",
+                    fontWeight: "bold",
+                    fontSize: "10px",
+                  }}
                 >
-                  Queries
-                </button>
-              </td>
-              <td>
-                <button
-                  className="item-sales-search"
-                  onClick={() => navigate("/admin/dynamics/" + item.order_uuid)}
-                >
-                  Dynamics
-                </button>
-              </td>
-              
-            </tr>
-          ))}
+                  Copied!
+                </div>
+              ) : (
+                <CopyAll />
+              )}
+            </td>
+            <td>
+              <button
+                className="item-sales-search"
+                onClick={() => navigate("/admin/queries/" + item.name)}
+              >
+                Queries
+              </button>
+            </td>
+            <td>
+              <button
+                className="item-sales-search"
+                onClick={() => navigate("/admin/dynamics/" + item.name)}
+              >
+                Dynamics
+              </button>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );
 }
-function AddGroup({ onSave }) {
+
+function AddGroup({ onSave, popupInfo, itemCategories, getItem }) {
   const [data, setdata] = useState({});
   const [group, setGroup] = useState();
 
   const [errMassage, setErrorMassage] = useState("");
+
+ /* useEffect(() => {
+    if (popupInfo?.type === 'edit') {
+      setFormData({ ...popupInfo?.data });
+    } else {
+      setFormData({
+        group: '',
+      });
+    }
+  }, [popupInfo?.data, popupInfo?.type]);*/
+
 
   const submitHandler = async (e) => {
     e.preventDefault();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 
-const AddCustomer = ({ onSave, popupInfo, name }) => {
+const AddCustomer = ({ onSave, popupInfo, itemCategories, getItem }) => {
   const [formData, setFormData] = useState({});
   const [errMessage, setErrorMessage] = useState('');
   const [group, setGroup] = useState([]);
@@ -86,7 +86,7 @@ const AddCustomer = ({ onSave, popupInfo, name }) => {
           <div style={{ overflowY: 'scroll' }}>
             <form className="form" onSubmit={submitHandler}>
               <div className="row">
-                <h1>{popupInfo?.type === 'edit' ? 'Edit' : 'Add'} {name}</h1>
+                <h1>{popupInfo.type === "edit" ? "Edit" : "Add"} Customer</h1>
               </div>
 
               <div className="formGroup">
