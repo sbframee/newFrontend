@@ -88,7 +88,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
           <div style={{ overflowY: 'scroll' }}>
             <form className="form" onSubmit={submitHandler}>
               <div className="row">
-                <h1>Customer</h1>
+                <h1>{popupInfo.type === "edit" ? "Edit" : "Add"} Customer</h1>
               </div>
 
               <div className="formGroup">
@@ -173,7 +173,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
                 {errMessage === '' ? '' : 'Error: ' + errMessage}
               </i>
               <button type="submit" className="submit">
-                Save
+              {popupInfo.type === "edit" ? "Update" : "Save"}
               </button>
             </form>
           </div>
