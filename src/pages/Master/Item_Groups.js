@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import axios from "axios";
 
-const Groups = () => {
+const Item_Groups = () => {
   const [itemsData, setItemsData] = useState([]);
   const [disabledItem, setDisabledItem] = useState(false);
   const [filterItemsData, setFilterItemsData] = useState([]);
@@ -17,7 +17,7 @@ const Groups = () => {
   const getItemsData = async () => {
     const response = await axios({
       method: "get",
-      url: "http://localhost:9000/groups/GetCustomer_GroupList",
+      url: "http://localhost:9000/item_groups/GetItem_GroupList",
 
       headers: {
         "Content-Type": "application/json",
@@ -33,9 +33,9 @@ const Groups = () => {
       setFilterItemsData(
         itemsData.filter(
           (a) =>
-            a.customer_group &&
+            a.item_group &&
             (!filterTitle ||
-              a.customer_group
+              a.item_group
                 .toLocaleLowerCase()
                 .includes(filterTitle.toLocaleLowerCase()))
         )
@@ -49,7 +49,7 @@ const Groups = () => {
       <Header />
       <div className="item-sales-container orders-report-container">
         <div id="heading">
-          <h2>Groups</h2>
+          <h2>Items</h2>
         </div>
         <div id="item-sales-top">
           <div
@@ -66,7 +66,7 @@ const Groups = () => {
               type="text"
               onChange={(e) => setFilterTitle(e.target.value)}
               value={filterTitle}
-              placeholder="Search Group Title..."
+              placeholder="Search Item Group Title..."
               className="searchInput"
             />
 
@@ -74,7 +74,7 @@ const Groups = () => {
            
             <button
               className="item-sales-search"
-              onClick={() => setPopupForm("Groups")}
+              onClick={() => setPopupForm("Items")}
             >
               Add
             </button>
@@ -88,7 +88,7 @@ const Groups = () => {
         </div>
       </div>
       {popupForm ? (
-        <AddGroup
+        <AddItem
         onSave={() => setPopupForm(false)}
         setItemsData={setItemsData}
         popupInfo={popupForm}
@@ -103,7 +103,7 @@ const Groups = () => {
   );
 };
 
-export default Groups;
+export default Item_Groups;
 function Table({ itemsDetails, setPopupForm }) {
   return (
     <table
@@ -116,7 +116,7 @@ function Table({ itemsDetails, setPopupForm }) {
 
           <th colSpan={3}>
             <div className="t-head-element">
-              <span>Group</span>
+              <span>Item Group</span>
             </div>
           </th>
 
@@ -132,7 +132,7 @@ function Table({ itemsDetails, setPopupForm }) {
             >
               <td>{i + 1}</td>
 
-              <td colSpan={3}>{item?.customer_group}</td>
+              <td colSpan={3}>{item?.item_group}</td>
 
               <td
                 colSpan={1}
@@ -151,7 +151,7 @@ function Table({ itemsDetails, setPopupForm }) {
   );
 }
 
-function AddGroup({ onSave, popupInfo }) {
+function AddItem({ onSave, popupInfo }) {
   const [formData, setFormData] = useState({});
   const [errMessage, setErrorMessage] = useState('');
  
@@ -160,10 +160,7 @@ function AddGroup({ onSave, popupInfo }) {
       setFormData({ ...popupInfo?.data });
     } else {
       setFormData({
-        group: '',
-        customer_name: '',
-        address: '',
-        customer_mobile: '',
+        item_group: '',
       });
     }
   }, [popupInfo?.data, popupInfo?.type]);
@@ -176,7 +173,7 @@ function AddGroup({ onSave, popupInfo }) {
 
       if (popupInfo?.type === 'edit') {
         response = await axios.put(
-          'http://localhost:9000/groups/putGroups',
+          'http://localhost:9000/item_groups/putItem_Group',
           [formData],
           {
             headers: {
@@ -186,7 +183,7 @@ function AddGroup({ onSave, popupInfo }) {
         );
       } else {
         response = await axios.post(
-          'http://localhost:9000/groups/postCustomer_group',
+          'http://localhost:9000/item_groups/postItem_Groups',
           formData,
           {
             headers: {
@@ -223,14 +220,14 @@ function AddGroup({ onSave, popupInfo }) {
               <div className="formGroup">
                 <div className="row" style={{ width: '100%' }}>
                   <label className="selectLabel" style={{ width: '100%' }}>
-                    Group
+                    Item Group
                     <input
                       type="text"
-                      name="customer_name"
+                      name="item_group"
                       className="numberInput"
-                      value={formData?.customer_group || ''}
+                      value={formData?.item_group || ''}
                       onChange={(e) =>
-                        setFormData({ ...formData, customer_group: e.target.value })
+                        setFormData({ ...formData, item_group: e.target.value })
                       }
                     />
                   </label>

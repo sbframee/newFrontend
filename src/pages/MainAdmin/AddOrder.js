@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
 import { Add } from "@mui/icons-material";
 import AddCustomer from './AddCustomer';
+import AddItem from "./AddItem";
 import Select from "react-select";
 
 const AddOrder = ({ onSave, onClose }) => {
@@ -9,9 +10,10 @@ const AddOrder = ({ onSave, onClose }) => {
     const [category, setCategory] = useState('New Order');
     const [latestOrderId, setLatestOrderId] = useState(0);
     const [customersData, setCustomersData] = useState([]);
-    const [details, setDetails] = useState({ customers: [] });
     const [newCustomerForm, setNewCustomerForm] = useState(false);
-  
+    const [newItemForm, setNewItemForm] = useState(false);
+    const [itemsData, setItemsData] = useState([]);
+
     const fetchLatestOrderId = async () => {
       try {
         const response = await axios.get("http://localhost:9000/orders/GetOrderList");
@@ -26,15 +28,22 @@ const AddOrder = ({ onSave, onClose }) => {
       }
     };
   
-    const getItemsData = async () => {
+    const getCustomersData = async () => {
       const response = await axios.get("http://localhost:9000/customers/GetCustomerList");
       console.log(response);
       if (response.data.success) setCustomersData(response.data.result);
+    };
+
+    const getItemsData = async () => {
+      const response = await axios.get("http://localhost:9000/items/GetItemList");
+      console.log(response);
+      if (response.data.success) setItemsData(response.data.result);
     };
   
   
     useEffect(() => {
       fetchLatestOrderId();
+      getCustomersData();
       getItemsData();
     }, []);
   
@@ -63,8 +72,6 @@ const AddOrder = ({ onSave, onClose }) => {
       [customersData, order]
     );
   
-    
-  
     const onCustomerChange = (doc, value) => {
       if (value.name === "customer_uuid");
       setOrder((prev) => ({
@@ -73,7 +80,38 @@ const AddOrder = ({ onSave, onClose }) => {
       }));
     };
   
-    console.log(details);
+    const itemsOptions = useMemo(
+      () =>
+        itemsData.map((a) => ({
+          value: a.item_uuid,
+          label: a?.item_name,
+        })),
+      [itemsData]
+    );
+  
+    const itemValue = useMemo(
+      () =>
+        order?.item_uuid
+          ? {
+              value: order?.item_uuid,
+              label: (() => {
+                let a = itemsData?.find(
+                  (j) => j.item_uuid === order.item_uuid
+                );
+                return a?.item_name;
+              })(),
+            }
+          : "",
+      [itemsData, order]
+    );
+  
+    const onItemChange = (doc, value) => {
+      if (value.name === "item_uuid");
+      setOrder((prev) => ({
+        ...prev,
+        [value.item_name]: doc.value,
+      }));
+    };
   
   
     const submitHandler = async (e) => {
@@ -82,6 +120,7 @@ const AddOrder = ({ onSave, onClose }) => {
   
       const orderData = {
         customer_uuid: customerValue.value,
+        item_uuid: itemValue.value,
         order_id: newOrderId,
         category
       };
@@ -137,6 +176,32 @@ const AddOrder = ({ onSave, onClose }) => {
                   </button>
                   </label>
                 </div>
+                <div className="row" style={{width:"100%"}}>
+                  <label className="selectLabel" style={{width:"100%"}}>
+                  Item
+          <Select
+                    name="item_uuid"
+                    options={itemsOptions}
+                    onChange={onItemChange}
+                    value={itemValue}
+                    openMenuOnFocus={true}
+                    menuPosition="fixed"
+                    menuPlacement="auto"
+                    placeholder="Select"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setNewItemForm("Item")}
+                    className="item-sales-search"
+                    style={{
+                      width: "fit-content",
+                      top: 0,
+                    }}
+                  >
+                    <Add />
+                  </button>
+                  </label>
+                </div>
                </div>
               <button type="submit" className="submit">Save</button>
             </form>
@@ -155,10 +220,28 @@ const AddOrder = ({ onSave, onClose }) => {
               customer_uuid: data?.customer_uuid,
             }));
           
-          getItemsData();
+          getCustomersData();
           setNewCustomerForm(false);
         }}
         name={newCustomerForm}
+      />
+    ) : (
+      ""
+    )}
+    {newItemForm ? (
+      <AddItem
+        onSave={(data, condition) => {
+          console.log(data);
+          if (newItemForm === "Item")
+            setOrder((prev) => ({
+              ...prev,
+              item_uuid: data?.item_uuid,
+            }));
+          
+          getItemsData();
+          setNewItemForm(false);
+        }}
+        name={newItemForm}
       />
     ) : (
       ""

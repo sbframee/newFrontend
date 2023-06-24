@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AddCustomer = ({ onSave, popupInfo }) => {
+const AddItem = ({ onSave, popupInfo }) => {
   const [formData, setFormData] = useState({});
   const [errMessage, setErrorMessage] = useState('');
   const [group, setGroup] = useState([]);
@@ -12,7 +12,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
 
   const fetchGroup = async () => {
     axios
-    .get('http://localhost:9000/groups/GetCustomer_GroupList')  // Update the endpoint here
+    .get('http://localhost:9000/item_groups/GetItem_GroupList')  // Update the endpoint here
     .then((response) => setGroup(response.data.result))
     .catch((error) => console.error(error));
   };
@@ -22,11 +22,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
       setFormData({ ...popupInfo?.data });
     } else {
       setFormData({
-        group: '',
-        customer_name: '',
-        customer_mobiule: '',
-        dob: '',
-        address: '',
+        item_group: '',
       });
     }
   }, [popupInfo?.data, popupInfo?.type]);
@@ -34,11 +30,6 @@ const AddCustomer = ({ onSave, popupInfo }) => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
-    if (!formData.customer_name) {
-      setErrorMessage('Please insert Customer name');
-      return;
-    }
 
     try {
       let response;
@@ -56,7 +47,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
       } else {
      
        response = await axios.post(
-        'http://localhost:9000/customers/postCustomer',
+        'http://localhost:9000/item_groups/postItem',
         formData,
         {
           headers: {
@@ -88,7 +79,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
           <div style={{ overflowY: 'scroll' }}>
             <form className="form" onSubmit={submitHandler}>
               <div className="row">
-                <h1>Customer</h1>
+                <h1>Item</h1>
               </div>
 
               <div className="formGroup">
@@ -99,23 +90,9 @@ const AddCustomer = ({ onSave, popupInfo }) => {
                       type="text"
                       name="customer_name"
                       className="numberInput"
-                      value={formData?.customer_name || ''}
+                      value={formData?.item_name || ''}
                       onChange={(e) =>
-                        setFormData({ ...formData, customer_name: e.target.value })
-                      }
-                    />
-                  </label>
-                </div>
-                <div className="row" style={{ width: '100%' }}>
-                  <label className="selectLabel" style={{ width: '100%' }}>
-                    Mobile Number
-                    <input
-                      type="number"
-                      name="customer_mobile"
-                      className="numberInput"
-                      value={formData?.customer_mobile || ''}
-                      onChange={(e) =>
-                        setFormData({ ...formData, customer_mobile: e.target.value })
+                        setFormData({ ...formData, item_name: e.target.value })
                       }
                     />
                   </label>
@@ -134,38 +111,10 @@ const AddCustomer = ({ onSave, popupInfo }) => {
                       {group && group.length > 0 &&
                         group.map((item) => (
                           <option key={item._id} value={item._id}>
-                            {item.customer_group}
+                            {item.item_group}
                           </option>
                         ))}
                     </select>
-                  </label>
-                </div>
-                <div className="row" style={{ width: '100%' }}>
-                  <label className="selectLabel" style={{ width: '100%' }}>
-                    Date Of Birth
-                    <input
-                      type="date"
-                      name="dob"
-                      className="numberInput"
-                      value={formData?.dob || ''}
-                      onChange={(e) =>
-                        setFormData({ ...formData, dob: e.target.value })
-                      }
-                    />
-                  </label>
-                </div>
-                <div className="row" style={{ width: '100%' }}>
-                  <label className="selectLabel" style={{ width: '100%' }}>
-                    Address
-                    <input
-                      type="text"
-                      name="address"
-                      className="numberInput"
-                      value={formData?.address || ''}
-                      onChange={(e) =>
-                        setFormData({ ...formData, address: e.target.value })
-                      }
-                    />
                   </label>
                 </div>
               </div>
@@ -186,4 +135,4 @@ const AddCustomer = ({ onSave, popupInfo }) => {
   );
 };
 
-export default AddCustomer;
+export default AddItem;

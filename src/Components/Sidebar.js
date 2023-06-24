@@ -56,6 +56,11 @@ const Sidebar = ({ setIsItemAvilableOpen }) => {
               link: "/admin/customerList",
             },
             {
+              name: "Items",
+              link: "/admin/itemList",
+            },
+            
+            {
               name: "Orders",
               link: "/admin/orderList",
             },
@@ -63,6 +68,11 @@ const Sidebar = ({ setIsItemAvilableOpen }) => {
               name: "Groups",
               link: "/admin/groupList",
             },
+            {
+              name: "Item_Groups",
+              link: "/admin/item_groupList",
+            },
+            
           ]}
         />
 
