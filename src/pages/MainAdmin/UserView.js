@@ -134,14 +134,15 @@ const UserView = () => {
         >
           <Add style={{ fontSize: "50px" }} />
         </div>
-      </div>
-      {showAddOrder ? (
+        {showAddOrder ? (
         <AddOrder
         onSave={handlePopupClose} onClose={handlePopupClose}
         />
       ) : (
         ""
       )}
+      </div>
+      
     </>
   );
 };

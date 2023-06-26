@@ -182,15 +182,15 @@ const AddOrder = ({ onSave, onClose }) => {
   return (
     <>
     <div className="overlay" style={{ zIndex: 9999999 }}>
-      <div className="modal" style={{ height: "fit-content", width: "fit-content" }}>
+      <div className="modal" style={{ height: "fit-content", width: "20%" }}>
         <div className="content" style={{
             height: "fit-content",
             padding: "20px",
-            width: "fit-content",
+            width: "100%",
           }}>
           <div style={{ overflowY: "scroll" }}>
             <form className="form" onSubmit={submitHandler}>
-              <div className="row">
+              <div className="row" style={{width:"100%"}}>
               <h2>Add Order</h2>
               </div>
 
@@ -207,19 +207,21 @@ const AddOrder = ({ onSave, onClose }) => {
                     menuPosition="fixed"
                     menuPlacement="auto"
                     placeholder="Select"
-                  />
+                  />                 
+                  </label>
                   <button
                     type="button"
                     onClick={() => setNewCustomerForm("Customer")}
                     className="item-sales-search"
                     style={{
-                      width: "fit-content",
+                      width: "30%",
                       top: 0,
+                      height: "fit-content"
                     }}
                   >
                     <Add />
                   </button>
-                  </label>
+                  
                 </div>
                 <div className="row" style={{width:"100%"}}>
                   <label className="selectLabel" style={{width:"100%"}}>
@@ -233,7 +235,8 @@ const AddOrder = ({ onSave, onClose }) => {
                     menuPosition="fixed"
                     menuPlacement="auto"
                     placeholder="Select"
-                  />
+                  />               
+                  </label>
                   <button
                     type="button"
                     onClick={() => setNewItemForm("Item")}
@@ -245,7 +248,6 @@ const AddOrder = ({ onSave, onClose }) => {
                   >
                     <Add />
                   </button>
-                  </label>
                 </div>
                 <div className="row" style={{width:"100%"}}>
                   <label className="selectLabel" style={{width:"100%"}}>
@@ -260,6 +262,7 @@ const AddOrder = ({ onSave, onClose }) => {
                     menuPlacement="auto"
                     placeholder="Select"
                   />
+                  </label>
                   <button
                     type="button"
                     onClick={() => setNewSupplierForm("Supplier")}
@@ -271,7 +274,6 @@ const AddOrder = ({ onSave, onClose }) => {
                   >
                     <Add />
                   </button>
-                  </label>
                 </div>
                </div>
               <button type="submit" className="submit">Save</button>
