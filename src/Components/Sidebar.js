@@ -59,7 +59,26 @@ const Sidebar = ({ setIsItemAvilableOpen }) => {
               name: "Items",
               link: "/admin/itemList",
             },
-            
+            {
+              name: "Users",
+              link: "/admin/userList",
+            },
+            {
+              name: "User_Groups",
+              link: "/admin/user_group",
+            },
+            {
+              name: "User_Role",
+              link: "/admin/userRole",
+            },
+            {
+              name: "Supplier",
+              link: "/admin/supplier",
+            },
+            {
+              name: "Supplier_Group",
+              link: "/admin/supplier_group",
+            },
             {
               name: "Orders",
               link: "/admin/orderList",
@@ -75,117 +94,6 @@ const Sidebar = ({ setIsItemAvilableOpen }) => {
             
           ]}
         />
-
-        {/* <NavLink
-          setIsItemAvilableOpen={setIsItemAvilableOpen}
-          title={"Quick Access"}
-          icon={<QuickAccessIcon sx={{ fontSize: 50 }} />}
-          isActive={false}
-          menuList={[
-            {
-              name: "Trips",
-              link: "#",
-            },
-            {
-              name: "Signed Bills",
-              link: "/admin/signedBills",
-            },
-            {
-              name: "Tasks",
-              link: "/admin/tasks",
-            },
-          ]}
-        /> */}
-        {/* <NavLink
-          title={"Report"}
-          icon={<AssessmentIcon sx={{ fontSize: 50 }} />}
-          isActive={false}
-          menuList={[
-            {
-              name: "User Activity",
-              link: "/admin/userActivity",
-            },
-            {
-              name: "UPI and Cheque Transaction",
-              link: "/admin/upiTransactionReport",
-            },
-            {
-              name: "Completed Orders",
-              link: "/admin/completeOrderReport",
-            },
-            {
-              name: "Items Wise",
-              link: "/admin/OrderItemReport",
-            },
-            {
-              name: "Completed Trips",
-              link: "/admin/CompletedTripsReport",
-            },
-            {
-              name: "Counter Ledger",
-              link: "/admin/CounterLeger",
-            },
-            {
-              name: "Outstandings",
-              link: "/admin/Outstandings",
-            },
-            {
-              name: "Pending Entry",
-              link: "/admin/pendingEntry",
-            },
-            {
-              name: "Current Stock",
-              link: "/admin/currentStock",
-            },
-            {
-              name: "Vochers",
-              link: "/admin/stockTransferVochers",
-            },
-            {
-              name: "Cancel Order",
-              link: "/admin/cancelOrders",
-            },
-            {
-              name: "Invoice Number Wise Order",
-              link: "/admin/InvoiceNumberWiseOrder",
-            },
-            {
-              name: "Party Wise Company Discount",
-              link: "/admin/PartyWiseCompanyDiscount",
-            },
-            {
-              name: "Retailer Margin Report",
-              link: "/admin/RetailerMarginReport",
-            },
-          ]}
-        /> 
-        <NavLink
-          title={"Setup"}
-          icon={<SettingsIcon sx={{ fontSize: 50 }} />}
-          isActive={false}
-          menuList={[
-            {
-              name: "Organization Data",
-              link: "/admin/credentials",
-            },
-
-          ]}
-        />
-        <div
-          className="nav_link_container"
-          onClick={updateMinLevel}
-          style={{ width: "100%" }}
-        >
-          <div className={`nav-link`}>
-            <>
-              <UpgradeOutlined sx={{ fontSize: 50 }} />
-              <p>
-                <span className={`nav_title`}>Update MinLevel</span>
-              </p>
-            </>
-        
-          </div>
-        </div> */}
       </div>
     </div>
   );

@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AddItem = ({ onSave, popupInfo }) => {
+const AddCustomer = ({ onSave, popupInfo }) => {
   const [formData, setFormData] = useState({});
   const [errMessage, setErrorMessage] = useState('');
   const [group, setGroup] = useState([]);
+  const [role, setRole] = useState([]);
 
   useEffect(() => {
     fetchGroup();
+    fetchRoll();
   }, []);
 
   const fetchGroup = async () => {
     axios
-    .get('http://localhost:9000/groups/GetItem_GroupList')  // Update the endpoint here
+    .get('http://localhost:9000/groups/GetUser_GroupList')  // Update the endpoint here
     .then((response) => setGroup(response.data.result))
+    .catch((error) => console.error(error));
+  };
+
+  const fetchRoll = async () => {
+    axios
+    .get('http://localhost:9000/groups/GetUserRoleList')  // Update the endpoint here
+    .then((response) => setRole(response.data.result))
     .catch((error) => console.error(error));
   };
 
@@ -22,7 +31,10 @@ const AddItem = ({ onSave, popupInfo }) => {
       setFormData({ ...popupInfo?.data });
     } else {
       setFormData({
-        item_group: '',
+        user_group: '',
+        user_name: '',
+        user_password: '',
+        user_role: '',
       });
     }
   }, [popupInfo?.data, popupInfo?.type]);
@@ -31,12 +43,17 @@ const AddItem = ({ onSave, popupInfo }) => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    if (!formData.user_name) {
+      setErrorMessage('Please insert User name');
+      return;
+    }
+
     try {
       let response;
 
       if (popupInfo?.type === 'edit') {
         response = await axios.put(
-          'http://localhost:9000/items/putItems',
+          'http://localhost:9000/users/putUsers',
           [formData],
           {
             headers: {
@@ -47,7 +64,7 @@ const AddItem = ({ onSave, popupInfo }) => {
       } else {
      
        response = await axios.post(
-        'http://localhost:9000/item_groups/postItem',
+        'http://localhost:9000/users/postUser',
         formData,
         {
           headers: {
@@ -79,7 +96,7 @@ const AddItem = ({ onSave, popupInfo }) => {
           <div style={{ overflowY: 'scroll' }}>
             <form className="form" onSubmit={submitHandler}>
               <div className="row">
-                <h1>{popupInfo?.type === 'edit' ? "Edit" : "Add"} Item</h1>
+                <h1>{popupInfo.type === "edit" ? "Edit" : "Add"} User</h1>
               </div>
 
               <div className="formGroup">
@@ -88,11 +105,25 @@ const AddItem = ({ onSave, popupInfo }) => {
                     Name
                     <input
                       type="text"
-                      name="item_name"
+                      name="user_name"
                       className="numberInput"
-                      value={formData?.item_name || ''}
+                      value={formData?.user_name || ''}
                       onChange={(e) =>
-                        setFormData({ ...formData, item_name: e.target.value })
+                        setFormData({ ...formData, user_name: e.target.value })
+                      }
+                    />
+                  </label>
+                </div>
+                <div className="row" style={{ width: '100%' }}>
+                  <label className="selectLabel" style={{ width: '100%' }}>
+                    Password
+                    <input
+                      type="password"
+                      name="user_password"
+                      className="numberInput"
+                      value={formData?.user_password || ''}
+                      onChange={(e) =>
+                        setFormData({ ...formData, user_password: e.target.value })
                       }
                     />
                   </label>
@@ -101,17 +132,37 @@ const AddItem = ({ onSave, popupInfo }) => {
                   <label className="selectLabel" style={{ width: '100%' }}>
                     Select Group:
                     <select
-                      id="item_group"
-                      value={formData?.item_group || ''}
+                      id="user_group"
+                      value={formData?.user_group || ''}
                       onChange={(e) =>
-                        setFormData({ ...formData, item_group: e.target.value })
+                        setFormData({ ...formData, user_group: e.target.value })
                       }
                     >
                       <option value="">Select</option>
                       {group && group.length > 0 &&
                         group.map((item) => (
-                          <option key={item.item_group} value={item.item_group}>
-                            {item.item_group}
+                          <option key={item.user_group} value={item.user_group}>
+                            {item.user_group}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+                <div className="row" style={{ width: '100%' }}>
+                  <label className="selectLabel" style={{ width: '100%' }}>
+                    Select Type:
+                    <select
+                      id="user_role"
+                      value={formData?.user_role || ''}
+                      onChange={(e) =>
+                        setFormData({ ...formData, user_role: e.target.value })
+                      }
+                    >
+                      <option value="">Select</option>
+                      {role && role.length > 0 &&
+                        role.map((item) => (
+                          <option key={item.user_role} value={item.user_role}>
+                            {item.user_role}
                           </option>
                         ))}
                     </select>
@@ -122,7 +173,7 @@ const AddItem = ({ onSave, popupInfo }) => {
                 {errMessage === '' ? '' : 'Error: ' + errMessage}
               </i>
               <button type="submit" className="submit">
-              {popupInfo?.type === 'edit' ? "Update" : "Save"}
+              {popupInfo.type === "edit" ? "Update" : "Save"}
               </button>
             </form>
           </div>
@@ -135,4 +186,4 @@ const AddItem = ({ onSave, popupInfo }) => {
   );
 };
 
-export default AddItem;
+export default AddCustomer;

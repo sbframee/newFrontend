@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AddItem = ({ onSave, popupInfo }) => {
+const AddSupplier = ({ onSave, popupInfo }) => {
   const [formData, setFormData] = useState({});
   const [errMessage, setErrorMessage] = useState('');
   const [group, setGroup] = useState([]);
@@ -12,7 +12,7 @@ const AddItem = ({ onSave, popupInfo }) => {
 
   const fetchGroup = async () => {
     axios
-    .get('http://localhost:9000/groups/GetItem_GroupList')  // Update the endpoint here
+    .get('http://localhost:9000/groups/GetSupplier_GroupList')  // Update the endpoint here
     .then((response) => setGroup(response.data.result))
     .catch((error) => console.error(error));
   };
@@ -22,7 +22,8 @@ const AddItem = ({ onSave, popupInfo }) => {
       setFormData({ ...popupInfo?.data });
     } else {
       setFormData({
-        item_group: '',
+        supplier_group: '',
+        supplier_name: '',
       });
     }
   }, [popupInfo?.data, popupInfo?.type]);
@@ -31,12 +32,17 @@ const AddItem = ({ onSave, popupInfo }) => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    if (!formData.supplier_name) {
+      setErrorMessage('Please insert Supplier name');
+      return;
+    }
+
     try {
       let response;
 
       if (popupInfo?.type === 'edit') {
         response = await axios.put(
-          'http://localhost:9000/items/putItems',
+          'http://localhost:9000/suppliers/putSuppliers',
           [formData],
           {
             headers: {
@@ -47,7 +53,7 @@ const AddItem = ({ onSave, popupInfo }) => {
       } else {
      
        response = await axios.post(
-        'http://localhost:9000/item_groups/postItem',
+        'http://localhost:9000/suppliers/postSupplier',
         formData,
         {
           headers: {
@@ -79,7 +85,7 @@ const AddItem = ({ onSave, popupInfo }) => {
           <div style={{ overflowY: 'scroll' }}>
             <form className="form" onSubmit={submitHandler}>
               <div className="row">
-                <h1>{popupInfo?.type === 'edit' ? "Edit" : "Add"} Item</h1>
+                <h1>{popupInfo?.type === 'edit' ? "Edit" : "Add"} Supplier</h1>
               </div>
 
               <div className="formGroup">
@@ -88,11 +94,11 @@ const AddItem = ({ onSave, popupInfo }) => {
                     Name
                     <input
                       type="text"
-                      name="item_name"
+                      name="supplier_name"
                       className="numberInput"
-                      value={formData?.item_name || ''}
+                      value={formData?.supplier_name || ''}
                       onChange={(e) =>
-                        setFormData({ ...formData, item_name: e.target.value })
+                        setFormData({ ...formData, supplier_name: e.target.value })
                       }
                     />
                   </label>
@@ -101,17 +107,17 @@ const AddItem = ({ onSave, popupInfo }) => {
                   <label className="selectLabel" style={{ width: '100%' }}>
                     Select Group:
                     <select
-                      id="item_group"
-                      value={formData?.item_group || ''}
+                      id="supplier_group"
+                      value={formData?.supplier_group || ''}
                       onChange={(e) =>
-                        setFormData({ ...formData, item_group: e.target.value })
+                        setFormData({ ...formData, supplier_group: e.target.value })
                       }
                     >
                       <option value="">Select</option>
                       {group && group.length > 0 &&
                         group.map((item) => (
-                          <option key={item.item_group} value={item.item_group}>
-                            {item.item_group}
+                          <option key={item.supplier_group} value={item.supplier_group}>
+                            {item.supplier_group}
                           </option>
                         ))}
                     </select>
@@ -122,7 +128,7 @@ const AddItem = ({ onSave, popupInfo }) => {
                 {errMessage === '' ? '' : 'Error: ' + errMessage}
               </i>
               <button type="submit" className="submit">
-              {popupInfo?.type === 'edit' ? "Update" : "Save"}
+                {popupInfo?.type === 'edit' ? "Update" : "Save"}
               </button>
             </form>
           </div>
@@ -135,4 +141,4 @@ const AddItem = ({ onSave, popupInfo }) => {
   );
 };
 
-export default AddItem;
+export default AddSupplier;

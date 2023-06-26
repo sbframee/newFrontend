@@ -22,11 +22,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
       setFormData({ ...popupInfo?.data });
     } else {
       setFormData({
-        group: '',
-        customer_name: '',
-        customer_mobiule: '',
-        dob: '',
-        address: '',
+        item_group: '',
       });
     }
   }, [popupInfo?.data, popupInfo?.type]);
@@ -45,7 +41,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
 
       if (popupInfo?.type === 'edit') {
         response = await axios.put(
-          'http://localhost:9000/items/putItems',
+          'http://localhost:9000/customers/putCustomers',
           [formData],
           {
             headers: {
@@ -88,7 +84,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
           <div style={{ overflowY: 'scroll' }}>
             <form className="form" onSubmit={submitHandler}>
               <div className="row">
-                <h1>{popupInfo.type === "edit" ? "Edit" : "Add"} Customer</h1>
+                <h1>{popupInfo?.type === 'edit' ? "Edit" : "Add"} Customer</h1>
               </div>
 
               <div className="formGroup">
@@ -133,7 +129,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
                       <option value="">Select</option>
                       {group && group.length > 0 &&
                         group.map((item) => (
-                          <option key={item._id} value={item._id}>
+                          <option key={item.customer_group} value={item.customer_group}>
                             {item.customer_group}
                           </option>
                         ))}
@@ -173,7 +169,7 @@ const AddCustomer = ({ onSave, popupInfo }) => {
                 {errMessage === '' ? '' : 'Error: ' + errMessage}
               </i>
               <button type="submit" className="submit">
-              {popupInfo.type === "edit" ? "Update" : "Save"}
+              {popupInfo?.type === 'edit' ? "Update" : "Save"}
               </button>
             </form>
           </div>

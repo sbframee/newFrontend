@@ -4,6 +4,7 @@ import { Add } from "@mui/icons-material";
 import AddCustomer from './AddCustomer';
 import AddItem from "./AddItem";
 import Select from "react-select";
+import AddSupplier from './AddSupplier';
 
 const AddOrder = ({ onSave, onClose }) => {
     const [order, setOrder] = useState();
@@ -13,6 +14,9 @@ const AddOrder = ({ onSave, onClose }) => {
     const [newCustomerForm, setNewCustomerForm] = useState(false);
     const [newItemForm, setNewItemForm] = useState(false);
     const [itemsData, setItemsData] = useState([]);
+    const [newSupplierForm, setNewSupplierForm] = useState(false);
+    const [suppliersData, setSuppliersData] = useState([]);
+
 
     const fetchLatestOrderId = async () => {
       try {
@@ -39,12 +43,19 @@ const AddOrder = ({ onSave, onClose }) => {
       console.log(response);
       if (response.data.success) setItemsData(response.data.result);
     };
+
+    const getSuppliersData = async () => {
+      const response = await axios.get("http://localhost:9000/suppliers/GetSupplierList");
+      console.log(response);
+      if (response.data.success) setSuppliersData(response.data.result);
+    };
   
   
     useEffect(() => {
       fetchLatestOrderId();
       getCustomersData();
       getItemsData();
+      getSuppliersData();
     }, []);
   
     const customersOptions = useMemo(
@@ -113,6 +124,39 @@ const AddOrder = ({ onSave, onClose }) => {
       }));
     };
   
+    const suppliersOptions = useMemo(
+      () =>
+        suppliersData.map((a) => ({
+          value: a.supplier_uuid,
+          label: a?.supplier_name,
+        })),
+      [suppliersData]
+    );
+  
+    const supplierValue = useMemo(
+      () =>
+        order?.supplier_uuid
+          ? {
+              value: order?.supplier_uuid,
+              label: (() => {
+                let a = suppliersData?.find(
+                  (j) => j.supplier_uuid === order.supplier_uuid
+                );
+                return a?.supplier_name;
+              })(),
+            }
+          : "",
+      [suppliersData, order]
+    );
+  
+    const onSupplierChange = (doc, value) => {
+      if (value.name === "supplier_uuid");
+      setOrder((prev) => ({
+        ...prev,
+        [value.supplier_name]: doc.value,
+      }));
+    };
+  
   
     const submitHandler = async (e) => {
       e.preventDefault();
@@ -121,6 +165,7 @@ const AddOrder = ({ onSave, onClose }) => {
       const orderData = {
         customer_uuid: customerValue.value,
         item_uuid: itemValue.value,
+        supplier_uuid: supplierValue.value,
         order_id: newOrderId,
         category
       };
@@ -202,6 +247,32 @@ const AddOrder = ({ onSave, onClose }) => {
                   </button>
                   </label>
                 </div>
+                <div className="row" style={{width:"100%"}}>
+                  <label className="selectLabel" style={{width:"100%"}}>
+                  Supplier
+          <Select
+                    name="supplier_uuid"
+                    options={suppliersOptions}
+                    onChange={onSupplierChange}
+                    value={supplierValue}
+                    openMenuOnFocus={true}
+                    menuPosition="fixed"
+                    menuPlacement="auto"
+                    placeholder="Select"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setNewSupplierForm("Supplier")}
+                    className="item-sales-search"
+                    style={{
+                      width: "fit-content",
+                      top: 0,
+                    }}
+                  >
+                    <Add />
+                  </button>
+                  </label>
+                </div>
                </div>
               <button type="submit" className="submit">Save</button>
             </form>
@@ -242,6 +313,24 @@ const AddOrder = ({ onSave, onClose }) => {
           setNewItemForm(false);
         }}
         name={newItemForm}
+      />
+    ) : (
+      ""
+    )}
+    {newSupplierForm ? (
+      <AddSupplier
+        onSave={(data, condition) => {
+          console.log(data);
+          if (newSupplierForm === "Supplier")
+            setOrder((prev) => ({
+              ...prev,
+              supplier_uuid: data?.supplier_uuid,
+            }));
+          
+          getItemsData();
+          setNewSupplierForm(false);
+        }}
+        name={newSupplierForm}
       />
     ) : (
       ""

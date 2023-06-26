@@ -3,17 +3,17 @@ import axios from 'axios';
 import "./style.css";
 
 const LoginPage = () => {
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
+  const [user_name, setName] = useState('');
+  const [user_password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      const userType = localStorage.getItem('user_type');
-      if (userType === 'admin') {
+      const userRoll = localStorage.getItem('user_roll');
+      if (userRoll === 'admin') {
         window.location.assign(`/admin`);
-      } else if (userType === 'user') {
+      } else if (userRoll === 'user') {
         window.location.assign(`/user`);
       }
     }
@@ -32,21 +32,20 @@ const LoginPage = () => {
     try {
       setIsLoading(true);
       const response = await axios.post('http://localhost:9000/users/loginUser', {
-        name,
-        password,
+        user_name,
+        user_password,
       });
-      console.log(response.data); // Assuming the response contains a success message or user data
+      console.log(response.data);
 
-      // Store the user type and token in local storage
-      const { userType, token } = response.data;
-      localStorage.setItem('user_type', userType);     
+      const { userRoll, token } = response.data;
+      localStorage.setItem('user_roll', userRoll);     
       localStorage.setItem('token', token);
-      localStorage.setItem('username', name);
+      localStorage.setItem('username', user_name);
 
-      if (userType === 'admin') {
+      if (userRoll === 'admin') {
         window.location.assign('/admin');
         setIsLoading(false);
-      } else if (userType === 'user') {
+      } else if (userRoll === 'user') {
         window.location.assign('/user');
         setIsLoading(false);
       }
@@ -65,9 +64,9 @@ const LoginPage = () => {
           Username:
         </label>
           <input type="text" className="form-input"
-            name="name"
-            id="name"
-            value={name} 
+            name="username"
+            id="username"
+            value={user_name} 
             onChange={handleUsernameChange}
             autoComplete="off"
             required />
@@ -78,9 +77,9 @@ const LoginPage = () => {
         </label>
           <input type="password" 
           className="form-input"
-          name="password"
-          id="password"         
-          value={password} 
+          name="user_password"
+          id="user_password"         
+          value={user_password} 
           onChange={handlePasswordChange} 
           autoComplete="off"
             required
