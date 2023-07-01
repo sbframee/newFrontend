@@ -47,7 +47,7 @@ const AddItem = ({ onSave, popupInfo }) => {
       } else {
      
        response = await axios.post(
-        'http://localhost:9000/item_groups/postItem',
+        'http://localhost:9000/items/postItem',
         formData,
         {
           headers: {

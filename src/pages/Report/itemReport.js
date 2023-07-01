@@ -2,20 +2,16 @@ import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import "./styles.css";
-import {
-  Edit,
-} from "@mui/icons-material";
 import axios from "axios";
-import AddOrder from "../MainAdmin/AddOrder";
-import Update from "../MainAdmin/Update";
 
-const Items = () => {
+const ItemReport = () => {
   const [itemsData, setItemsData] = useState([]);
-  const [disabledItem, setDisabledItem] = useState(false);
   const [filterItemsData, setFilterItemsData] = useState([]);
   const [popupForm, setPopupForm] = useState(false);
-  const [filterTitle, setFilterTitle] = useState("");
-  const [updateForm, setUpdateForm] = useState(false);
+  const [filterDate, setFilterDate] = useState("");
+  const [itemList, setItemList] = useState([]); // List of all items
+  const [selectedItem, setSelectedItem] = useState("");
+  const [searchClicked, setSearchClicked] = useState(false);
 
   const getItemsData = async () => {
     try {
@@ -55,31 +51,41 @@ const Items = () => {
     }
   };
 
-  useEffect(() => {
-    getItemsData();
-  }, [popupForm]);
-
-  useEffect(
-    () =>
-      setFilterItemsData(
-        itemsData.filter(
-          (a) =>
-            a.customer_name &&
-            (!filterTitle ||
-              a.customer_name
-                .toLocaleLowerCase()
-                .includes(filterTitle.toLocaleLowerCase()))
-        )
-      ),
-    [itemsData, filterTitle, disabledItem]
-  );
-  
-  const openPopupForm = () => {
-    setPopupForm(true);
+  const getItemList = async () => {
+    try {
+      const response = await axios.get("http://localhost:9000/items/GetItemList");
+      if (response.data.success) {
+        const items = response.data.result;
+        setItemList(items);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handlePopupClose = () => {
-    setPopupForm(false);
+  useEffect(() => {
+    getItemsData();
+    getItemList();
+  }, [popupForm]);
+
+  useEffect(() => {
+    setFilterItemsData(
+      itemsData.filter(
+        (a) =>
+          a.date &&
+          (!filterDate || a.date.toLocaleLowerCase().includes(filterDate.toLocaleLowerCase()))
+      )
+    );
+  }, [itemsData, filterDate]);
+
+  const handleSearch = () => {
+    setSearchClicked(true);
+    const filteredItems = itemsData.filter(
+      (item) =>
+        (!filterDate || item.date === filterDate) &&
+        (!selectedItem || item.item_name === selectedItem)
+    );
+    setFilterItemsData(filteredItems);
   };
 
   return (
@@ -88,7 +94,7 @@ const Items = () => {
       <Header />
       <div className="item-sales-container orders-report-container">
         <div id="heading">
-          <h2>Orders</h2>
+          <h2>Item Report</h2>
         </div>
         <div id="item-sales-top">
           <div
@@ -102,44 +108,43 @@ const Items = () => {
             }}
           >
             <input
-              type="text"
-              onChange={(e) => setFilterTitle(e.target.value)}
-              value={filterTitle}
-              placeholder="Search Order Title..."
+              type="date"
+              onChange={(e) => setFilterDate(e.target.value)}
+              value={filterDate}
+              placeholder="Search date"
               className="searchInput"
             />
 
-            <div>Total Items: {filterItemsData.length}</div>
+            <select
+              value={selectedItem}
+              onChange={(e) => setSelectedItem(e.target.value)}
+              className="searchInput"
+            >
+              <option value="">All Items</option>
+              {itemList.map((item) => (
+                <option key={item.item_id} value={item.item_name}>
+                  {item.item_name}
+                </option>
+              ))}
+            </select>
 
-            <button className="item-sales-search" onClick={openPopupForm}>
-              Add
-            </button>
+            <button className="item-sales-search" onClick={handleSearch}>Search</button>
           </div>
         </div>
-        <div className="table-container-user item-sales-container">
-        <Table itemsDetails={filterItemsData} setUpdateForm={setUpdateForm} />
-        </div>
+        
+        {searchClicked && (
+          <div className="table-container-user item-sales-container">
+            <Table itemsDetails={filterItemsData} setPopupForm={setPopupForm} />
+          </div>
+        )}
       </div>
-      {popupForm ? (
-        <AddOrder onSave={handlePopupClose} onClose={handlePopupClose}  popupInfo={popupForm}/>
-      ) : (
-        ""
-      )}
-      {updateForm && updateForm.type === "edit" && (
-  <Update
-    onSave={handlePopupClose}
-    onClose={handlePopupClose}
-    item={updateForm.data}
-    order={updateForm}
-  />
-)}
     </>
   );
 };
 
-export default Items;
+export default ItemReport;
 
-function Table({ itemsDetails, setUpdateForm }) {
+function Table({ itemsDetails, setPopupForm }) {
   return (
     <table
       className="user-table"
@@ -179,9 +184,6 @@ function Table({ itemsDetails, setUpdateForm }) {
             <td colSpan={3}>{item.item_name}</td>
             <td colSpan={3}>{item.supplier_name}</td>
             <td colSpan={3}>{item.category}</td>
-            <td colSpan={1} onClick={(e) => { e.stopPropagation(); setUpdateForm({ type: "edit", data: item }); }}>
-              <Edit />
-            </td>
           </tr>
         ))}
       </tbody>

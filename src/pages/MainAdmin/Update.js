@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./style.css";
 
-const Update = ({ onSave, onClose, item }) => {
+const Update = ({ onSave, onClose, item, order }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [errMessage, setErrorMessage] = useState("");
   const [cname, setCname] = useState([]);
   const [category, setCategory] = useState([]);
   const [customerDetails, setCustomerDetails] = useState({});
-  const [data, setData] = useState({ category: item.category || "", name: item.cname || "" });
+  const [data, setData] = useState({
+    category: item.category || "",
+    category_name: item.category_name || "",
+  });
 
   useEffect(() => {
     fetchOrderDetails();
@@ -18,7 +21,9 @@ const Update = ({ onSave, onClose, item }) => {
   const fetchOrderDetails = async () => {
     if (item) {
       try {
-        const orderResponse = await axios.get(`http://localhost:9000/orders/GetOrderDetails/${item.order_id}`);
+        const orderResponse = await axios.get(
+          `http://localhost:9000/orders/GetOrderDetails/${item.order_id}`
+        );
         const orderData = orderResponse.data.result;
         console.log("Order Data:", orderData);
         setSelectedOrder(orderData);
@@ -27,12 +32,14 @@ const Update = ({ onSave, onClose, item }) => {
         setData((prevState) => ({
           ...prevState,
           category: orderData.category,
-          name: orderData.cname,
+          name: orderData.category_name,
         }));
 
         // Fetch customer details based on customer_uuid
         try {
-          const customerResponse = await axios.get(`http://localhost:9000/customers/getCustomerDetails/${orderData.customer_uuid}`);
+          const customerResponse = await axios.get(
+            `http://localhost:9000/customers/getCustomerDetails/${orderData.customer_uuid}`
+          );
           const customerData = customerResponse.data.result;
           console.log("Customer Data:", customerData);
           setCustomerDetails(customerData);
@@ -58,10 +65,12 @@ const Update = ({ onSave, onClose, item }) => {
     setData((prevState) => ({
       ...prevState,
       category: selectedCategory,
-      name: "", // Reset the selected name when the category changes
+      category_name: "",
     }));
     axios
-      .get(`http://localhost:9000/category_names/getCategory_name?category=${selectedCategory}`)
+      .get(
+        `http://localhost:9000/category_names/getCategory_name?category=${selectedCategory}`
+      )
       .then((response) => setCname(response.data))
       .catch((error) => console.log(error));
   };
@@ -70,7 +79,7 @@ const Update = ({ onSave, onClose, item }) => {
     const selectedName = event.target.value;
     setData((prevState) => ({
       ...prevState,
-      name: selectedName,
+      category_name: selectedName,
     }));
   };
 
@@ -80,12 +89,16 @@ const Update = ({ onSave, onClose, item }) => {
         `http://localhost:9000/orders/putOrders/${item.order_id}`,
         {
           category: data.category,
-          cname: data.name,
+          category_name: data.category_name,
         }
       );
 
       if (response.data.success) {
-        const updatedOrder = { ...item, category: data.category, cname: data.name };
+        const updatedOrder = {
+          ...item,
+          category: data.category,
+          category_name: data.category_name,
+        };
         onSave(updatedOrder);
         onClose();
       } else {
@@ -113,51 +126,53 @@ const Update = ({ onSave, onClose, item }) => {
                 <h2>Update</h2>
               </div>
               <div className="formGroup">
-              {customerDetails && customerDetails.customer_name && (
-                <div className="row" style={{width:"100%"}}>
-                  <label className="selectLabel">
-                    Name
-                    <input type="text" value={customerDetails.customer_name} readOnly />
-                  </label>
+                {customerDetails && customerDetails.customer_name && (
+                  <div className="row" style={{ width: "100%" }}>
+                    <label className="selectLabel">
+                      Name
+                      <input type="text" value={customerDetails.customer_name} readOnly />
+                    </label>
                   </div>
-              )}
-               {customerDetails && customerDetails.customer_mobile && (
-                <div className="row" style={{width:"100%"}}>                  <label className="selectLabel">
-                    Mobile Number
-                    <input type="text" value={customerDetails.customer_mobile} readOnly />
+                )}
+                {customerDetails && customerDetails.customer_mobile && (
+                  <div className="row" style={{ width: "100%" }}>
+                    <label className="selectLabel">
+                      Mobile Number
+                      <input type="text" value={customerDetails.customer_mobile} readOnly />
+                    </label>
+                  </div>
+                )}
+                <div className="row" style={{ width: "100%" }}>
+                  <label className="selectLabel" style={{ width: "100%" }}>
+                    Select category
+                    <select id="category" value={data.category} onChange={onCategoryChange}>
+                      <option value="">Select</option>
+                      {category.map(({ name }) => (
+                        <option key={name} value={name}>
+                          {name}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                 </div>
-              )}
-              <div className="row" style={{width:"100%"}}>                <label className="selectLabel" style={{ width: "100%" }}>
-                  Select category
-                  <select id="category" value={data.category} onChange={onCategoryChange}>
-                    <option value="">Select</option>
-                    {category.map(({ name }) => (
-                      <option key={name} value={name}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <div className="row" style={{ width: "100%" }}>
+                  <label className="selectLabel" style={{ width: "100%" }}>
+                    Select name
+                    <select id="name" value={data.category_name} onChange={onNameChange}>
+                      <option value="">Select</option>
+                      {cname.map(({ name }) => (
+                        <option key={name} value={name}>
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
               </div>
-              <div className="row" style={{width:"100%"}}>
-  <label className="selectLabel" style={{ width: "100%" }}>
-    Select name
-    <select id="name" value={data.name} onChange={onNameChange}>
-      <option value="">Select</option>
-      {cname.map(({ name }) => (
-        <option key={name} value={name}>
-          {name}
-        </option>
-      ))}
-    </select>
-  </label>
-</div>
-</div>
 
               {errMessage && <p>{errMessage}</p>}
 
-              <button type="submit" className="submit" onClick={() => { submitHandler(); onClose(); }}>
+              <button type="submit" className="submit" onClick={submitHandler}>
                 Update
               </button>
 

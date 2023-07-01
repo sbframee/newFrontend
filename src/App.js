@@ -17,7 +17,10 @@ import User_Groups from "./pages/Master/User_Groups";
 import User_Role from "./pages/Master/User_Role";
 import Suppliers from "./pages/Master/Suppliers";
 import Supplier_Groups from "./pages/Master/Supplier_Groups";
-
+import ItemReport from "./pages/Report/itemReport";
+import CustomerReport from "./pages/Report/CustomerReport";
+import SupplierReport from "./pages/Report/SupplierReport";
+import CustomerReciept from "./pages/Receipt/CustomerReceipt";
 
 function App() {
 
@@ -31,11 +34,15 @@ function App() {
         <Route path="/user" element={<UserView />} />
         <Route path= "/admin/orderList" element={<Orders />} />
         <Route path= "/admin/customerList" element={<Customers />} />
+        <Route path= "/admin/customerReport" element={<CustomerReport/>} />
+        <Route path= "/admin/customerReceipt" element={<CustomerReciept/>} />
         <Route path= "/admin/ItemList" element={<Items />} />
         <Route path= "/admin/item_groupList" element={<Item_Groups />} />
+        <Route path= "/report/itemReport" element={<ItemReport />} />
         <Route path= "/admin/groupList" element={<Groups />} /><Route path= "/admin/orderList" element={<Orders />} />
         <Route path= "/admin/userList" element={<Users />} />
         <Route path= "/admin/supplier" element={<Suppliers/>} />
+        <Route path= "/admin/supplierReport" element={<SupplierReport/>} />
         <Route path= "/admin/user_group" element={<User_Groups />} />
         <Route path= "/admin/userRole" element={<User_Role />} />
         <Route path= "/admin/supplier_group" element={<Supplier_Groups />} />

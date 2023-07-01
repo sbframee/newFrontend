@@ -2,24 +2,18 @@ import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import "./styles.css";
-import {
-  Edit,
-} from "@mui/icons-material";
 import axios from "axios";
-import AddItem from "../MainAdmin/AddItem";
 
-const Items = () => {
+const CustomerReciept = () => {
   const [itemsData, setItemsData] = useState([]);
-  const [disabledItem, setDisabledItem] = useState(false);
   const [filterItemsData, setFilterItemsData] = useState([]);
   const [popupForm, setPopupForm] = useState(false);
   const [filterTitle, setFilterTitle] = useState("");
-  const [filterGroup, setFilterGroup] = useState("");
 
   const getItemsData = async () => {
     const response = await axios({
       method: "get",
-      url: "http://localhost:9000/items/GetItemList",
+      url: "http://localhost:9000/customers/GetCustomerList",
 
       headers: {
         "Content-Type": "application/json",
@@ -30,45 +24,27 @@ const Items = () => {
   useEffect(() => {
     getItemsData();
   }, [popupForm]);
-
   useEffect(
     () =>
       setFilterItemsData(
         itemsData.filter(
           (a) =>
-            a.item_name &&
+            a.customer_name &&
             (!filterTitle ||
-              a.item_name
+              a.customer_name
                 .toLocaleLowerCase()
                 .includes(filterTitle.toLocaleLowerCase()))
         )
       ),
-    [itemsData, filterTitle, disabledItem]
+    [itemsData, filterTitle]
   );
-
-  useEffect(
-    () =>
-      setFilterItemsData(
-        itemsData.filter(
-          (a) =>
-            a.item_group &&
-            (!filterGroup ||
-              a.item_group
-                .toLocaleLowerCase()
-                .includes(filterGroup.toLocaleLowerCase()))
-        )
-      ),
-    [itemsData, filterGroup, disabledItem]
-  );
-
-
   return (
     <>
       <Sidebar />
       <Header />
       <div className="item-sales-container orders-report-container">
         <div id="heading">
-          <h2>Items</h2>
+          <h2>Customers</h2>
         </div>
         <div id="item-sales-top">
           <div
@@ -85,26 +61,12 @@ const Items = () => {
               type="text"
               onChange={(e) => setFilterTitle(e.target.value)}
               value={filterTitle}
-              placeholder="Search Item Title..."
-              className="searchInput"
-            />
-
-            <input
-              type="text"
-              onChange={(e) => setFilterGroup(e.target.value)}
-              value={filterGroup}
-              placeholder="Search Group Title..."
+              placeholder="Search Customer Title..."
               className="searchInput"
             />
 
             <div>Total Items: {filterItemsData.length}</div>
            
-            <button
-              className="item-sales-search"
-              onClick={() => setPopupForm("Items")}
-            >
-              Add
-            </button>
           </div>
         </div>
         <div className="table-container-user item-sales-container">
@@ -114,23 +76,11 @@ const Items = () => {
           />
         </div>
       </div>
-      {popupForm ? (
-        <AddItem
-        onSave={() => setPopupForm(false)}
-        setItemsData={setItemsData}
-        popupInfo={popupForm}
-        items={itemsData}
-        getItem={getItemsData}
-        />
-      ) : (
-        ""
-      )}
-      
     </>
   );
 };
 
-export default Items;
+export default CustomerReciept;
 function Table({ itemsDetails, setPopupForm }) {
   return (
     <table
@@ -144,11 +94,7 @@ function Table({ itemsDetails, setPopupForm }) {
           <th colSpan={3}>
             <div className="t-head-element">
               <span>Name</span>
-            </div>
-          </th>
-          <th colSpan={3}>
-            <div className="t-head-element">
-              <span>Group</span>
+              
             </div>
           </th>
           <th colSpan={6}></th>
@@ -163,18 +109,8 @@ function Table({ itemsDetails, setPopupForm }) {
             >
               <td>{i + 1}</td>
 
-              <td colSpan={3}>{item?.item_name}</td>
-              <td colSpan={3}>{item?.item_group}</td>
-              <td
-                colSpan={1}
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  setPopupForm({ type: "edit", data: item });
-                }}
-              >
-                <Edit />
-              </td>
+              <td colSpan={3}>{item?.customer_name}</td>
+              
             </tr>
           ))}
       </tbody>

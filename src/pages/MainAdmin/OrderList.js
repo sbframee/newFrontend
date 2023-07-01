@@ -68,7 +68,7 @@ const OrderList = ({ items }) => {
                       <td colSpan={2} style={{ color: "blue" }}>
                         <span className="flex">{item?.customer_mobile || ""}</span>
                       </td>
-                      <td colSpan={2}>{item?.cname}</td>
+                      <td colSpan={2}>{item?.category_name}</td>
                       <td style={{ color: "green", display: "none", cursor: "pointer" }}>
                         <WhatsApp />
                       </td>

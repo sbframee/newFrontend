@@ -51,7 +51,7 @@ const NavLink = ({
             className="menu"
             style={{
               display: menuVisible ? "block" : "none",
-              top: title === "Report" ?"-350px" : "-10px",
+              top: title === "Report" ?"-50px" : "-10px",
               width:title === "Report" ?"300px":"200px"
             }}
           >

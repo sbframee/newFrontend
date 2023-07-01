@@ -120,7 +120,7 @@ const AddOrder = ({ onSave, onClose }) => {
       if (value.name === "item_uuid");
       setOrder((prev) => ({
         ...prev,
-        [value.item_name]: doc.value,
+        [value.name]: doc.value,
       }));
     };
   
@@ -153,7 +153,7 @@ const AddOrder = ({ onSave, onClose }) => {
       if (value.name === "supplier_uuid");
       setOrder((prev) => ({
         ...prev,
-        [value.supplier_name]: doc.value,
+        [value.name]: doc.value,
       }));
     };
   
@@ -171,10 +171,11 @@ const AddOrder = ({ onSave, onClose }) => {
       };
   
       try {
-        await axios.post('http://localhost:9000/orders/postOrder', orderData);
+       await axios.post('http://localhost:9000/orders/postOrder', orderData);
         console.log('Order added successfully');
         onSave();
-      } catch (error) {
+      
+    } catch (error) {
         console.error('Failed to add order', error);
       }
     };  
@@ -275,6 +276,7 @@ const AddOrder = ({ onSave, onClose }) => {
                     <Add />
                   </button>
                 </div>
+               
                </div>
               <button type="submit" className="submit">Save</button>
             </form>
