@@ -42,10 +42,10 @@ const LoginPage = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('username', user_name);
 
-      if (userRoll === 'admin') {
+      if (userRoll === 'super_admin') {
         window.location.assign('/admin');
         setIsLoading(false);
-      } else if (userRoll === 'user') {
+      } else if (userRoll === 'admin') {
         window.location.assign('/user');
         setIsLoading(false);
       }

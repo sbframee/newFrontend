@@ -8,43 +8,15 @@ const SupplierReport = () => {
   const [itemsData, setItemsData] = useState([]);
   const [filterSuppliersData, setFilterSuppliersData] = useState([]);
   const [popupForm, setPopupForm] = useState(false);
-  const [filterDate, setFilterDate] = useState("");
   const [supplierList, setSupplierList] = useState([]); 
   const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [searchClicked, setSearchClicked] = useState(false);
 
   const getItemsData = async () => {
     try {
-      const response = await axios.get("http://localhost:9000/orders/GetOrderList");
+      const response = await axios.get("http://localhost:9000/suppliers/GetSupplierList");
       if (response.data.success) {
-        const orders = response.data.result;
-
-        const ordersWithCustomerData = await Promise.all(
-          orders.map(async (orderItem) => {
-            try {
-              const [customerResponse, itemResponse, supplierResponse] = await Promise.all([
-                axios.get(`http://localhost:9000/customers/getCustomerDetails/${orderItem.customer_uuid}`),
-                axios.get(`http://localhost:9000/items/getItemDetails/${orderItem.item_uuid}`),
-                axios.get(`http://localhost:9000/suppliers/getSupplierDetails/${orderItem.supplier_uuid}`)
-              ]);
-
-              const customerData = customerResponse.data.result;
-              const itemData = itemResponse.data.result;
-              const supplierData = supplierResponse.data.result;
-
-              return {
-                ...orderItem,
-                customer_name: customerData.customer_name,
-                item_name: itemData.item_name,
-                supplier_name: supplierData.supplier_name
-              };
-            } catch (error) {
-              console.error(error);
-              return orderItem; 
-            }
-          })
-        );
-        setItemsData(ordersWithCustomerData);
+        const items = response.data.result;
+        setItemsData(items);
       }
     } catch (error) {
       console.error(error);
@@ -53,7 +25,7 @@ const SupplierReport = () => {
 
   const getSupplierList = async () => {
     try {
-      const response = await axios.get("http://localhost:9000/suppliers/GetSupplierList");
+      const response = await axios.get("http://localhost:9000/groups/GetSupplier_GroupList");
       if (response.data.success) {
         const items = response.data.result;
         setSupplierList(items);
@@ -69,26 +41,12 @@ const SupplierReport = () => {
   }, [popupForm]);
 
   useEffect(() => {
-    setFilterSuppliersData(
-      itemsData.filter(
-        (a) =>
-          a.date &&
-          (!filterDate || a.date.toLocaleLowerCase().includes(filterDate.toLocaleLowerCase()))
-      )
+    const filteredItems = itemsData.filter(
+      (item) => (!selectedSupplier || item.supplier_group === selectedSupplier)
     );
-  }, [itemsData, filterDate]);
-
+    setFilterSuppliersData(filteredItems);
+  }, [itemsData, selectedSupplier]);
   
-  const handleSearch = () => {
-    setSearchClicked(true);
-    const filteredSuppliers = itemsData.filter(
-      (item) =>
-        (!filterDate || item.date === filterDate) &&
-        (!selectedSupplier || item.supplier_name === selectedSupplier)
-    );
-    setFilterSuppliersData(filteredSuppliers);
-  };
-
   return (
     <>
       <Sidebar />
@@ -108,36 +66,28 @@ const SupplierReport = () => {
               width: "100%",
             }}
           >
-            <input
-              type="date"
-              onChange={(e) => setFilterDate(e.target.value)}
-              value={filterDate}
-              placeholder="Search date"
-              className="searchInput"
-            />
-
+     
             <select
               value={selectedSupplier}
               onChange={(e) => setSelectedSupplier(e.target.value)}
               className="searchInput"
             >
-              <option value="">All Suppliers</option>
+              <option value="">Select Suppliers Group</option>
               {supplierList.map((item) => (
-                <option key={item.supplier_id} value={item.supplier_name}>
-                  {item.supplier_name}
+                <option key={item.supplier_uuid} value={item.supplier_group}>
+                  {item.supplier_group}
                 </option>
               ))}
             </select>
 
-            <button className="item-sales-search" onClick={handleSearch}>Search</button>
           </div>
         </div>
         
-        {searchClicked && (
+        {selectedSupplier && filterSuppliersData.length > 0 ? (
           <div className="table-container-user item-sales-container">
             <Table itemsDetails={filterSuppliersData} setPopupForm={setPopupForm} />
           </div>
-        )}
+        ) : null}
       </div>
       
     </>
@@ -146,7 +96,7 @@ const SupplierReport = () => {
 
 export default SupplierReport;
 
-function Table({ itemsDetails, setPopupForm }) {
+function Table({ itemsDetails }) {
   return (
     <table
       className="user-table"
@@ -157,22 +107,7 @@ function Table({ itemsDetails, setPopupForm }) {
           <th>S.N</th>
           <th colSpan={3}>
             <div className="t-head-element">
-              <span>Customer</span>
-            </div>
-          </th>
-          <th colSpan={3}>
-            <div className="t-head-element">
-              <span>Item</span>
-            </div>
-          </th>
-          <th colSpan={3}>
-            <div className="t-head-element">
               <span>Supplier</span>
-            </div>
-          </th>
-          <th colSpan={3}>
-            <div className="t-head-element">
-              <span>Order</span>
             </div>
           </th>
           <th colSpan={6}></th>
@@ -180,12 +115,9 @@ function Table({ itemsDetails, setPopupForm }) {
       </thead>
       <tbody className="tbody">
         {itemsDetails?.map((item, i) => (
-          <tr key={item.order_uuid} style={{ height: "30px" }} onClick={() => {}}>
+          <tr key={item.supplier_uuid} style={{ height: "30px" }} onClick={() => {}}>
             <td>{i + 1}</td>
-            <td colSpan={3}>{item.customer_name}</td>
-            <td colSpan={3}>{item.item_name}</td>
             <td colSpan={3}>{item.supplier_name}</td>
-            <td colSpan={3}>{item.category}</td>
           </tr>
         ))}
       </tbody>

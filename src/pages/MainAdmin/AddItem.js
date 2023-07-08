@@ -5,6 +5,7 @@ const AddItem = ({ onSave, popupInfo }) => {
   const [formData, setFormData] = useState({});
   const [errMessage, setErrorMessage] = useState('');
   const [group, setGroup] = useState([]);
+  const [imageFile, setImageFile] = useState(null); 
 
   useEffect(() => {
     fetchGroup();
@@ -12,9 +13,9 @@ const AddItem = ({ onSave, popupInfo }) => {
 
   const fetchGroup = async () => {
     axios
-    .get('http://localhost:9000/groups/GetItem_GroupList')  // Update the endpoint here
-    .then((response) => setGroup(response.data.result))
-    .catch((error) => console.error(error));
+      .get('http://localhost:9000/groups/GetItem_GroupList')
+      .then((response) => setGroup(response.data.result))
+      .catch((error) => console.error(error));
   };
 
   useEffect(() => {
@@ -23,15 +24,26 @@ const AddItem = ({ onSave, popupInfo }) => {
     } else {
       setFormData({
         item_group: '',
+        item_price: '', // Initialize the price field
       });
     }
   }, [popupInfo?.data, popupInfo?.type]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
     try {
+      const formDataWithImage = new FormData(); // Create a new FormData instance
+      formDataWithImage.append('image', imageFile); // Append the image file to the FormData
+      formDataWithImage.append('item_group', formData.item_group);
+      formDataWithImage.append('item_name', formData.item_name);
+      formDataWithImage.append('price', formData.item_price);
+
       let response;
 
       if (popupInfo?.type === 'edit') {
@@ -45,21 +57,20 @@ const AddItem = ({ onSave, popupInfo }) => {
           }
         );
       } else {
-     
-       response = await axios.post(
-        'http://localhost:9000/items/postItem',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+        response = await axios.post(
+          'http://localhost:9000/items/postItem',
+          formDataWithImage, 
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
+            },
+          }
+        );
       }
+
       if (response.data.success) {
         onSave(response.data.result, 1);
       }
-      
     } catch (error) {
       console.error(error);
     }
@@ -79,7 +90,7 @@ const AddItem = ({ onSave, popupInfo }) => {
           <div style={{ overflowY: 'scroll' }}>
             <form className="form" onSubmit={submitHandler}>
               <div className="row">
-                <h1>{popupInfo?.type === 'edit' ? "Edit" : "Add"} Item</h1>
+                <h1>{popupInfo?.type === 'edit' ? 'Edit' : 'Add'} Item</h1>
               </div>
 
               <div className="formGroup">
@@ -108,7 +119,8 @@ const AddItem = ({ onSave, popupInfo }) => {
                       }
                     >
                       <option value="">Select</option>
-                      {group && group.length > 0 &&
+                      {group &&
+                        group.length > 0 &&
                         group.map((item) => (
                           <option key={item.item_group} value={item.item_group}>
                             {item.item_group}
@@ -117,12 +129,37 @@ const AddItem = ({ onSave, popupInfo }) => {
                     </select>
                   </label>
                 </div>
+                <div className="row" style={{ width: '100%' }}>
+                  <label className="selectLabel" style={{ width: '100%' }}>
+                    Price:
+                    <input
+                      type="text"
+                      name="item_price"
+                      className="numberInput"
+                      value={formData?.item_price || ''}
+                      onChange={(e) =>
+                        setFormData({ ...formData, item_price: e.target.value })
+                      }
+                    />
+                  </label>
+                </div>
+                <div className="row" style={{ width: '100%' }}>
+                  <label className="selectLabel" style={{ width: '100%' }}>
+                    Image:
+                    <input
+                      type="file"
+                      name="image"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                </div>
               </div>
               <i style={{ color: 'red' }}>
                 {errMessage === '' ? '' : 'Error: ' + errMessage}
               </i>
               <button type="submit" className="submit">
-              {popupInfo?.type === 'edit' ? "Update" : "Save"}
+                {popupInfo?.type === 'edit' ? 'Update' : 'Save'}
               </button>
             </form>
           </div>
